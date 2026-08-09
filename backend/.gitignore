@@ -1,0 +1,18 @@
+# Entorno virtual
+.venv/
+
+# Configuración local y secretos
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
