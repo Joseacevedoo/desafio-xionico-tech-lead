@@ -2,6 +2,12 @@
 
 Solución técnica para una PoC de registro de pedidos con aplicación Flutter, API FastAPI y persistencia en SQL Server.
 
+## Video demo y TDR
+
+El video demo y el Registro de Decisiones Técnicas (TDR) están disponibles en la siguiente carpeta de Google Drive:
+
+[Ver video demo y TDR en Google Drive](https://drive.google.com/drive/folders/1SrIABIdsJMJivzRXu5vUGDPlfszlswAo?usp=sharing)
+
 El proyecto está organizado en tres módulos principales:
 
 - `backend`: API REST con FastAPI, SQLAlchemy y pyodbc.
