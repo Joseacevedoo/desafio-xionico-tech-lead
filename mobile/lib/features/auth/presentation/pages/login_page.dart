@@ -28,6 +28,8 @@ class _LoginView extends StatefulWidget {
 class _LoginViewState extends State<_LoginView> {
   final _formKey = GlobalKey<FormState>();
 
+  final _scrollController = ScrollController();
+
   final _usernameController = TextEditingController();
 
   final _passwordController = TextEditingController();
@@ -39,7 +41,15 @@ class _LoginViewState extends State<_LoginView> {
   bool _isShowingLoadingDialog = false;
 
   @override
+  void initState() {
+    super.initState();
+    _passwordFocusNode.addListener(_handlePasswordFocus);
+  }
+
+  @override
   void dispose() {
+    _passwordFocusNode.removeListener(_handlePasswordFocus);
+    _scrollController.dispose();
     _usernameFocusNode.dispose();
     _passwordFocusNode.dispose();
     _usernameController.dispose();
@@ -63,6 +73,8 @@ class _LoginViewState extends State<_LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.loading) {
@@ -78,11 +90,19 @@ class _LoginViewState extends State<_LoginView> {
       },
       child: Scaffold(
         backgroundColor: AppColors.brandBlue,
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: Align(
             alignment: Alignment.topCenter,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(26, 46, 26, 24),
+              controller: _scrollController,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(
+                26,
+                isKeyboardVisible ? 12 : 46,
+                26,
+                24,
+              ),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 520),
                 child: Form(
@@ -93,10 +113,10 @@ class _LoginViewState extends State<_LoginView> {
                     children: [
                       Image.asset(
                         'assets/brand/xionico_splash.png',
-                        width: 160,
+                        width: isKeyboardVisible ? 125 : 160,
                         fit: BoxFit.contain,
                       ),
-                      const SizedBox(height: 14),
+                      SizedBox(height: isKeyboardVisible ? 6 : 14),
                       Text(
                         'Gestión de Pedidos',
                         style: Theme.of(context).textTheme.headlineMedium
@@ -107,7 +127,7 @@ class _LoginViewState extends State<_LoginView> {
                             ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 42),
+                      SizedBox(height: isKeyboardVisible ? 18 : 42),
                       TextFormField(
                         controller: _usernameController,
                         focusNode: _usernameFocusNode,
@@ -129,7 +149,7 @@ class _LoginViewState extends State<_LoginView> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: isKeyboardVisible ? 14 : 20),
                       TextFormField(
                         controller: _passwordController,
                         focusNode: _passwordFocusNode,
@@ -165,7 +185,7 @@ class _LoginViewState extends State<_LoginView> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 36),
+                      SizedBox(height: isKeyboardVisible ? 12 : 20),
                       BlocBuilder<AuthCubit, AuthState>(
                         builder: (context, state) {
                           final isLoading = state.status == AuthStatus.loading;
@@ -199,6 +219,24 @@ class _LoginViewState extends State<_LoginView> {
         ),
       ),
     );
+  }
+
+  void _handlePasswordFocus() {
+    if (!_passwordFocusNode.hasFocus) {
+      return;
+    }
+
+    Future<void>.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted || !_scrollController.hasClients) {
+        return;
+      }
+
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   Future<void> _showLoginLoadingDialog() async {

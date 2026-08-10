@@ -24,8 +24,10 @@ class ProductRepository:
             WHERE p.is_active = 1
               AND (
                     :search IS NULL
-                    OR p.code LIKE '%' + :search + '%'
-                    OR p.name LIKE '%' + :search + '%'
+                    OR p.code COLLATE Modern_Spanish_100_CI_AI
+                        LIKE '%' + :search + '%'
+                    OR p.name COLLATE Modern_Spanish_100_CI_AI
+                        LIKE '%' + :search + '%'
               );
             """
         )
@@ -59,8 +61,10 @@ class ProductRepository:
             WHERE p.is_active = 1
               AND (
                     :search IS NULL
-                    OR p.code LIKE '%' + :search + '%'
-                    OR p.name LIKE '%' + :search + '%'
+                    OR p.code COLLATE Modern_Spanish_100_CI_AI
+                        LIKE '%' + :search + '%'
+                    OR p.name COLLATE Modern_Spanish_100_CI_AI
+                        LIKE '%' + :search + '%'
               )
             ORDER BY p.product_id ASC
             OFFSET :offset ROWS

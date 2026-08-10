@@ -47,6 +47,13 @@ class _ProductListViewState extends State<_ProductListView> {
     );
   }
 
+  void _clearSearch() {
+    _searchController.clear();
+    FocusScope.of(context).unfocus();
+    setState(() {});
+    context.read<ProductCubit>().loadProducts(page: 1);
+  }
+
   Future<void> _refreshProducts(ProductState state) {
     return context.read<ProductCubit>().loadProducts(
       page: state.page,
@@ -113,36 +120,50 @@ class _ProductListViewState extends State<_ProductListView> {
                     child: TextField(
                       controller: _searchController,
                       textInputAction: TextInputAction.search,
+                      onChanged: (_) {
+                        setState(() {});
+                      },
                       onSubmitted: (_) => _search(),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Buscar por nombre o código',
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 15,
                         ),
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.search,
                           color: AppColors.textMuted,
                           size: 22,
                         ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                tooltip: 'Limpiar búsqueda',
+                                onPressed: _clearSearch,
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: AppColors.textMuted,
+                                  size: 22,
+                                ),
+                              )
+                            : null,
                         filled: true,
                         fillColor: AppColors.white,
-                        contentPadding: EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
                         ),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(14)),
                           borderSide: BorderSide(color: AppColors.border),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(14)),
                           borderSide: BorderSide(
                             color: AppColors.brandBlue,
                             width: 1.4,
                           ),
                         ),
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(14)),
                           borderSide: BorderSide(color: AppColors.border),
                         ),
